@@ -5,8 +5,8 @@ package mux
 import (
 	"os"
 
+	"github.com/weitecklee/ardanlabs-service/api/services/api/mid"
 	"github.com/weitecklee/ardanlabs-service/api/services/sales/route/sys/checkapi"
-	"github.com/weitecklee/ardanlabs-service/app/api/mid"
 	"github.com/weitecklee/ardanlabs-service/foundation/logger"
 	"github.com/weitecklee/ardanlabs-service/foundation/web"
 )
