@@ -34,6 +34,16 @@ curl-panic:
 admin:
 	go run api/tooling/admin/main.go
 
+# admin token
+# export TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjU0YmIyMTY1LTcxZTEtNDFhNi1hZjNlLTdkYTRhMGUxZTJjMSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZXJ2aWNlIHByb2plY3QiLCJzdWIiOiIwMWNhNDg4MS0yMWUwLTRjYTUtYTJkNy1lZmRjMTc4ODY0ZDIiLCJleHAiOjE3ODkwODQyMjIsImlhdCI6MTc1NzU0ODIyMiwiUm9sZXMiOlsiQURNSU4iXX0.Pw6CbfdPRQXw-lB3KQfAbMMJn0ym62f8lAQ9XpprODPmdrOPcaZPakUp9OcwAdPR1IpwDVWC0RzsoHWfvsYQgmb4YF5S0cGMaJu2fVNDuhQCGzuJV1R_XLjLc-53sUBvx2bpmNqLfl1ELpQndrRYhG7wogYukUmxwGyLwKN5Q1DlxRxpNNt6d0mXWqK2SGVpx6UEyk_JZS1bEtlPFkQH21LUto9ALbop7i6GWUOiVsXlKq2bEpWfXM4WSKd1tnXcanWYy09ZdL1-BJQIM0GeE8l2RjxlyYwJfuaRYWpDx0Bik1uwVliDoA01dBOmMqMt-wM-3a6kivBBorkc9vI7VQ
+
+# user token
+# export TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6IjU0YmIyMTY1LTcxZTEtNDFhNi1hZjNlLTdkYTRhMGUxZTJjMSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzZXJ2aWNlIHByb2plY3QiLCJzdWIiOiIwMWNhNDg4MS0yMWUwLTRjYTUtYTJkNy1lZmRjMTc4ODY0ZDIiLCJleHAiOjE3ODkwODQzNDAsImlhdCI6MTc1NzU0ODM0MCwiUm9sZXMiOlsiVVNFUiJdfQ.Qz6W4SDknXQjxpnNMD_NfIX1BqR0yEtGR-yBrvMADzbYzUJLtgm3Wj3X4lzZPZB4_6Zl8N_f-xykTdMx02-q1t-P9ud-BypFudlrgrCqk7xtq4n3fcBOJQCOZ0Gl5ahUFkjFLnCWYb_qKXYs-gwgB2foYk4u8qWn4_HheM7Gfnz3qRz5_KlXFkti34f3iZJTr9Jbve6sOnb6UYbMb8ojiVkqCKe7FrvpmOtMjFoWE9Ys7ZJB3to5voaE_tqUMILLhnkfKm7gyNFMqZ-NraPg71cVw7bRAuh0RiHrSitDDsJfYu6HLEtEJ3iqgX88MJ4e7Ue2zr1Bv7haoOD8N-gTvQ
+
+curl-auth:
+	curl -il \
+	-H "Authorization: Bearer ${TOKEN}" "http://localhost:3000/testauth"
+
 # ==============================================================================
 # Define dependencies
 

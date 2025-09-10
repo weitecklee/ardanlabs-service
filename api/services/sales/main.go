@@ -15,6 +15,8 @@ import (
 	"github.com/ardanlabs/conf/v3"
 	"github.com/weitecklee/ardanlabs-service/api/services/api/debug"
 	"github.com/weitecklee/ardanlabs-service/api/services/sales/mux"
+	"github.com/weitecklee/ardanlabs-service/business/api/auth"
+	"github.com/weitecklee/ardanlabs-service/foundation/keystore"
 	"github.com/weitecklee/ardanlabs-service/foundation/logger"
 	"github.com/weitecklee/ardanlabs-service/foundation/web"
 )
@@ -67,6 +69,11 @@ func run(ctx context.Context, log *logger.Logger) error {
 			DebugHost          string        `conf:"default:0.0.0.0:3010"`
 			CORSAllowedOrigins []string      `conf:"default:*,mask"`
 		}
+		Auth struct {
+			KeysFolder string `conf:"default:zarf/keys/"`
+			ActiveKID  string `conf:"default:54bb2165-71e1-41a6-af3e-7da4a0e1e2c1"`
+			Issuer     string `conf:"default:service project"`
+		}
 	}{
 		Version: conf.Version{
 			Build: build,
@@ -96,6 +103,29 @@ func run(ctx context.Context, log *logger.Logger) error {
 	log.Info(ctx, "startup", "config", out)
 
 	// -------------------------------------------------------------------------
+	// Initialize authentication support
+
+	log.Info(ctx, "startup", "status", "initializing authentication support")
+
+	// Load the private keys files from disk. We can assume some system like
+	// Vault has created these files already. How that happens is not our
+	// concern.
+	ks := keystore.New()
+	if err := ks.LoadRSAKeys(os.DirFS(cfg.Auth.KeysFolder)); err != nil {
+		return fmt.Errorf("reading keys: %w", err)
+	}
+
+	authCfg := auth.Config{
+		Log:       log,
+		KeyLookup: ks,
+	}
+
+	ath, err := auth.New(authCfg)
+	if err != nil {
+		return fmt.Errorf("constructing auth: %w", err)
+	}
+
+	// -------------------------------------------------------------------------
 	// Start Debug Service
 
 	go func() {
@@ -116,7 +146,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
-	webAPI := mux.WebAPI(log, shutdown)
+	webAPI := mux.WebAPI(log, ath, shutdown)
 
 	api := http.Server{
 		Addr:         cfg.Web.APIHost,
