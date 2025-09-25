@@ -16,6 +16,7 @@ import (
 	"github.com/weitecklee/ardanlabs-service/api/services/api/debug"
 	"github.com/weitecklee/ardanlabs-service/api/services/sales/mux"
 	"github.com/weitecklee/ardanlabs-service/app/api/authclient"
+	"github.com/weitecklee/ardanlabs-service/business/data/sqldb"
 	"github.com/weitecklee/ardanlabs-service/foundation/logger"
 	"github.com/weitecklee/ardanlabs-service/foundation/web"
 )
@@ -71,6 +72,15 @@ func run(ctx context.Context, log *logger.Logger) error {
 		Auth struct {
 			Host string `conf:"default:http://auth-service.sales-system.svc.cluster.local:6000"`
 		}
+		DB struct {
+			User         string `conf:"default:postgres"`
+			Password     string `conf:"default:postgres,mask"`
+			HostPort     string `conf:"default:database-service.sales-system.svc.cluster.local"`
+			Name         string `conf:"default:postgres"`
+			MaxIdleConns int    `conf:"default:2"`
+			MaxOpenConns int    `conf:"default:0"`
+			DisableTLS   bool   `conf:"default:true"`
+		}
 	}{
 		Version: conf.Version{
 			Build: build,
@@ -98,6 +108,26 @@ func run(ctx context.Context, log *logger.Logger) error {
 		return fmt.Errorf("generating config for output: %w", err)
 	}
 	log.Info(ctx, "startup", "config", out)
+
+	// -------------------------------------------------------------------------
+	// Database Support
+
+	log.Info(ctx, "startup", "status", "initializing database support", "hostport", cfg.DB.HostPort)
+
+	db, err := sqldb.Open(sqldb.Config{
+		User:         cfg.DB.User,
+		Password:     cfg.DB.Password,
+		HostPort:     cfg.DB.HostPort,
+		Name:         cfg.DB.Name,
+		MaxIdleConns: cfg.DB.MaxIdleConns,
+		MaxOpenConns: cfg.DB.MaxOpenConns,
+		DisableTLS:   cfg.DB.DisableTLS,
+	})
+	if err != nil {
+		return fmt.Errorf("connecting to db: %w", err)
+	}
+
+	defer db.Close()
 
 	// -------------------------------------------------------------------------
 	// Initialize authentication support
@@ -130,7 +160,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGINT, syscall.SIGTERM)
 
-	webAPI := mux.WebAPI(log, authClient, shutdown)
+	webAPI := mux.WebAPI(build, log, db, authClient, shutdown)
 
 	api := http.Server{
 		Addr:         cfg.Web.APIHost,
