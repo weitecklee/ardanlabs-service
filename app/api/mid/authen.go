@@ -21,7 +21,7 @@ func AuthenticateService(ctx context.Context, log *logger.Logger, client *authcl
 		return errs.New(errs.Unauthenticated, err)
 	}
 
-	ctx = setUserId(ctx, resp.UserID)
+	ctx = setUserID(ctx, resp.UserID)
 	ctx = setClaims(ctx, resp.Claims)
 
 	return handler(ctx)
@@ -62,7 +62,7 @@ func processJWT(ctx context.Context, auth *auth.Auth, token string) (context.Con
 		return ctx, errs.New(errs.Unauthenticated, fmt.Errorf("parsing subject: %w", err))
 	}
 
-	ctx = setUserId(ctx, subjectID)
+	ctx = setUserID(ctx, subjectID)
 	ctx = setClaims(ctx, claims)
 
 	return ctx, nil
@@ -84,7 +84,7 @@ func processBasic(ctx context.Context) (context.Context, error) {
 		return ctx, errs.Newf(errs.Unauthenticated, "parsing subject: %s", err)
 	}
 
-	ctx = setUserId(ctx, subjectID)
+	ctx = setUserID(ctx, subjectID)
 	ctx = setClaims(ctx, claims)
 
 	return ctx, nil

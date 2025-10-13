@@ -32,7 +32,7 @@ func GetClaims(ctx context.Context) auth.Claims {
 	return v
 }
 
-func setUserId(ctx context.Context, userID uuid.UUID) context.Context {
+func setUserID(ctx context.Context, userID uuid.UUID) context.Context {
 	return context.WithValue(ctx, userIDKey, userID)
 }
 
