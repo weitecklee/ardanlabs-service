@@ -2,7 +2,7 @@ package authclient
 
 import (
 	"github.com/google/uuid"
-	"github.com/weitecklee/ardanlabs-service/business/api/auth"
+	"github.com/weitecklee/ardanlabs-service/app/api/auth"
 )
 
 // Error represents an error in the system.
