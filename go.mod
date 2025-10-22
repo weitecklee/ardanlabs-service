@@ -1,11 +1,12 @@
 module github.com/weitecklee/ardanlabs-service
 
-go 1.24.6
+go 1.25
 
 require (
 	github.com/ardanlabs/conf/v3 v3.8.0
 	github.com/ardanlabs/darwin/v3 v3.3.1
 	github.com/arl/statsviz v0.7.1
+	github.com/go-json-experiment/json v0.0.0-20250910080747-cc2cfa0554c3
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.28.0
